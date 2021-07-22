@@ -21,6 +21,7 @@ rec {
             #    ln -s $out/lib/libsndio.so $out/lib/libsndio.so.6.1
             #  '';
             #}))
+            pipewire
           ];
       };
   sztim = with pkgs; [
