@@ -4,6 +4,10 @@ let
     inherit system;
     config.allowUnfree = true;
   };
+  unstable = import <nixos-unstable> {
+    inherit system;
+    config.allowUnfree = true;
+  };
 in
 rec {
   base = with pkgs; [
@@ -40,7 +44,7 @@ rec {
   # katalogi takie jak /bin, /lib, czy /usr, niefunkcjonalne w NixOS,
   # przez co prekompilowane binarki z rozszerzeń Code czy pakietów Pythona
   # mogą działać bez konieczności ich indywidualnej "nixyfikacji".
-  code = pkgs.vscode-fhsWithPackages (ps: with ps; [
+  code = unstable.vscode-fhsWithPackages (ps: with ps; [
     # rustup zlib  # needed for rust lang server extension
     # (python39Full.withPackages (pp: with pp; [ pipenv ]))
     pipenv
