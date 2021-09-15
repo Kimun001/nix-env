@@ -14,7 +14,7 @@ rec {
     firefox
     file
   ];
-  the_steam = pkgs.steam.override {
+  the_steam = unstable.steam.override {
         extraLibraries = pkgs: with pkgs;
           [
             libxkbcommon
@@ -28,15 +28,27 @@ rec {
             pipewire
           ];
       };
-  sztim = with pkgs; [
+  sztim = [ # with pkgs;
     the_steam
     the_steam.run
 #    steam-run
 #    steam-run-native
   ];
-  cdda = pkgs.cataclysm-dda.withMods [
-    pkgs.cataclysm-dda.pkgs.tileset.UndeadPeople
-  ];
+  cdda = let
+    mkf = import (builtins.fetchTarball
+      https://github.com/mkf/nixpkgs/archive/cdda-undeadpeopletileset_jmz-b/head.tar.gz
+    ) {
+        inherit system;
+        config.allowUnfree = true;
+      };
+  in
+  ( unstable.cataclysm-dda.withMods [
+      mkf.cataclysm-dda.pkgs.tileset.UndeadPeople
+    ] ).overrideAttrs(oldAttrs: {
+    postFixup = ''
+      rm $out/share/cataclysm-dda/font/Terminus.ttf
+    '';
+  });
 
   # Poniższe to wersja pakietu do VS Code która wrapuje Code tak, by
   # uruchamiał się w chroot'cie będącym compliant z Filesystem Hierarchy Standard,
