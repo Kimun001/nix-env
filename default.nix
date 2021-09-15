@@ -41,14 +41,17 @@ rec {
         inherit system;
         config.allowUnfree = true;
       };
+    choice = unstable; # interchangeably unstable/mkf
+    rmTerminus = choice.cataclysm-dda.overrideAttrs(oldAttrs: {
+      postFixup = ''
+        rm $out/share/cataclysm-dda/font/Terminus.ttf
+      '';
+    });
+    inherit (unstable.cataclysmDDA) attachPkgs pkgs;
   in
-  ( unstable.cataclysm-dda.withMods [
-      mkf.cataclysm-dda.pkgs.tileset.UndeadPeople
-    ] ).overrideAttrs(oldAttrs: {
-    postFixup = ''
-      rm $out/share/cataclysm-dda/font/Terminus.ttf
-    '';
-  });
+  (attachPkgs pkgs rmTerminus).withMods [
+    mkf.cataclysm-dda.pkgs.tileset.UndeadPeople
+  ];
 
   # Poniższe to wersja pakietu do VS Code która wrapuje Code tak, by
   # uruchamiał się w chroot'cie będącym compliant z Filesystem Hierarchy Standard,
